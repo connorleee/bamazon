@@ -128,20 +128,29 @@ let addInventory = () => {
                     }
                 ])
                 .then(answers => {
+                    let chosenItem;
+                    res.forEach(el => {
+                        if (el.product_name === answers.product){
+                            chosenItem = el;
+                        }
+                    })
+
+                    let currentQuantity = chosenItem.stock_quantity;
+
                     connection.query(
-                        `UPDATE stock_quantity FROM products WHERE product_name = ${answers}`,
-                        function (err, res) {
+                        `UPDATE products SET ? WHERE ?`,
+                        [
+                            {
+                                stock_quantity: currentQuantity + answers.addedQuantity
+                            },
+                            {
+                                product_name: answers.product
+                            }
+                        ],
+                        function (err) {
                             if (err) throw err;
 
-                            let products = [];
-
-                            for (let i = 0; i < res.length; i++) {
-                                const el = res[i];
-
-                                products.push(el.product_name);
-                            }
-
-                            console.log(products.join("\n"));
+                            console.log(`Successfully added ${answers.addedQuantity} units of ${answers.product}`);
                         }
                     )
                 })
