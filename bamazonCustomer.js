@@ -18,7 +18,6 @@ connection.connect(function (err) {
         "select * from products",
         function (err, res) {
             if (err) throw err;
-            console.log(res)
 
             inquirer
                 .prompt([
@@ -76,6 +75,6 @@ connection.connect(function (err) {
         }
     );
 
-    // connection.end();
+    connection.end();
 })
 
