@@ -54,7 +54,6 @@ connection.connect(function (err) {
                     if (answers.purchaseQty > availableQty){
                         console.log(`Sorry, but we do not have that many ${answers.product}s in stock. Please submit a new order with a quantity less than or equal to ${availableQty}`)
                     } else {
-
                         connection.query(
                             "UPDATE products SET ? WHERE ?",
                             [
@@ -70,11 +69,11 @@ connection.connect(function (err) {
                                 console.log(`Thank you for your purchase!`)
                             }
                         )
+                        
+                        connection.end();
                     }
                 });
         }
     );
 
-    connection.end();
 })
-

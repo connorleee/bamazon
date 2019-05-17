@@ -150,7 +150,7 @@ let addInventory = () => {
                         function (err) {
                             if (err) throw err;
 
-                            console.log(`Successfully added ${answers.addedQuantity} units of ${answers.product}`);
+                            // console.log(`Successfully added ${answers.addedQuantity} units of ${answers.product}`);
                         }
                     )
                 })
