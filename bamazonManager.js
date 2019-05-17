@@ -11,51 +11,73 @@ const connection = mysql.createConnection({
     database: "bamazon_db"
 });
 
-connection.connect(function (err) {
-    if (err) throw err;
+function managerOptions() {
+    connection.connect(function (err) {
+        if (err) throw err;
 
+        connection.query(
+            "SELECT * FROM products",
+            function (err, res) {
+                if (err) throw err;
+
+                console.log(res);
+
+                inquirer
+                    .prompt([
+                        {
+                            name: "managerOptions",
+                            message: "Manager Options",
+                            type: "rawlist",
+                            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+                        }
+                    ])
+                    .then(answers => {
+                        switch (answers.managerOptions) {
+                            case "View Products for Sale":
+                                products();
+                                break
+
+                            case "View Low Inventory":
+                                lowInventory();
+                                break
+
+                            case "Add to Inventory":
+                                addInventory();
+                                break
+
+                            case "Add New Product":
+                                addProduct();
+                                break
+
+                            default:
+                                console.log("error")
+                        }
+                        
+                        connection.end();
+                    })
+            }
+        )
+    })
+}
+
+
+let products = () => {
     connection.query(
         "SELECT * FROM products",
         function (err, res) {
             if (err) throw err;
 
-            console.log(res);
+            let products = [];
 
-            inquirer
-                .prompt([
-                    {
-                        name: "managerOptions",
-                        message: "Manager Options",
-                        type: "rawlist",
-                        choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
-                    }
-                ])
-                .then(answers => {
-                    switch (answers.managerOptions){
-                        case "View Products for Sale":
-                            products();
-                            break
+            for (let i = 0; i < res.length; i++) {
+                const el = res[i];
 
-                        case "View Low Inventory":
-                            lowInventory();
-                            break
+                products.push(el.product_name);
+            }
 
-                        case "Add to Inventory":
-                            addInventory();
-                            break
-
-                        case "Add New Product":
-                            addProduct();
-                            break
-                        
-                        default:
-                            console.log("error")
-                    }
-                })
+            console.log(products.join("\n"));
         }
     )
-});
-
-function products(){
-    console.log("Yup")
 }
+
+managerOptions();
