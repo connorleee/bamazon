@@ -52,7 +52,7 @@ function managerOptions() {
                             default:
                                 console.log("error")
                         }
-                        
+
                         connection.end();
                     })
             }
@@ -76,6 +76,75 @@ let products = () => {
             }
 
             console.log(products.join("\n"));
+        }
+    )
+}
+
+let lowInventory = () => {
+    connection.query(
+        "SELECT * FROM products WHERE stock_quantity < 5",
+        function (err, res) {
+            if (err) throw err;
+
+            let products = [];
+
+            for (let i = 0; i < res.length; i++) {
+                const el = res[i];
+
+                products.push(el.product_name);
+            }
+
+            console.log(products.join("\n"));
+        }
+    )
+}
+
+let addInventory = () => {
+    connection.query(
+        "select * from products",
+        function (err, res) {
+            if (err) throw err;
+
+            inquirer
+                .prompt([
+                    {
+                        name: "product",
+                        message: "Pick product to add inventory to",
+                        type: "rawlist",
+                        choices: function () {
+                            products = [];
+
+                            res.forEach(element => {
+                                products.push(element.product_name)
+                            });
+
+                            return products;
+                        }
+                    },
+                    {
+                        name: "addedQuantity",
+                        message: "Quantity to restock?",
+                        type: "number"
+                    }
+                ])
+                .then(answers => {
+                    connection.query(
+                        `UPDATE stock_quantity FROM products WHERE product_name = ${answers}`,
+                        function (err, res) {
+                            if (err) throw err;
+
+                            let products = [];
+
+                            for (let i = 0; i < res.length; i++) {
+                                const el = res[i];
+
+                                products.push(el.product_name);
+                            }
+
+                            console.log(products.join("\n"));
+                        }
+                    )
+                })
         }
     )
 }
